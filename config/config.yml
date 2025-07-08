@@ -1,0 +1,8 @@
+admin_token: access
+postgres:
+  connection_url: "postgres://postgres:1234@postgres:5432/document_manager"
+redis:
+  connection_url: "redis://redis:6379"
+token_generator:
+  secret_key: access
+  token_ttl_minutes: 60
