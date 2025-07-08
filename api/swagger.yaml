@@ -1,0 +1,280 @@
+basePath: /api
+definitions:
+  controllers.AuthUserController:
+    properties:
+      login:
+        type: string
+      pswd:
+        type: string
+    type: object
+  controllers.RegisterUserController:
+    properties:
+      login:
+        type: string
+      pswd:
+        type: string
+      token:
+        type: string
+    type: object
+  server.Response-views_AuthUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.AuthUserResponse'
+    type: object
+  server.Response-views_DeauthUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.DeauthUserResponse'
+    type: object
+  server.Response-views_GetDocsInfoResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.GetDocsInfoResponse'
+    type: object
+  server.Response-views_RegisterUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.RegisterUserResponse'
+    type: object
+  server.Response-views_UploadDocResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.UploadDocResponse'
+    type: object
+  views.AuthUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  views.DeauthUserResponse:
+    additionalProperties:
+      type: boolean
+    type: object
+  views.DocInfo:
+    properties:
+      created:
+        type: string
+      file:
+        type: boolean
+      grant:
+        items:
+          type: string
+        type: array
+      id:
+        type: string
+      mime:
+        type: string
+      name:
+        type: string
+      public:
+        type: boolean
+    type: object
+  views.GetDocsInfoResponse:
+    properties:
+      docs:
+        items:
+          $ref: '#/definitions/views.DocInfo'
+        type: array
+    type: object
+  views.RegisterUserResponse:
+    properties:
+      login:
+        type: string
+    type: object
+  views.UploadDocResponse:
+    properties:
+      file:
+        type: string
+    type: object
+host: 127.0.0.1:50000
+info:
+  contact: {}
+  description: Service for managing documents for users
+  title: Document Manager
+  version: 1.0.0
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Authenticates user by login and password and returns token
+      parameters:
+      - description: Login and password
+        in: body
+        name: auth_user_data
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.AuthUserController'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response-views_AuthUserResponse'
+      summary: Auth user
+      tags:
+      - users
+  /auth/{token}:
+    delete:
+      consumes:
+      - application/json
+      description: Deauthenticates user by token
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response-views_DeauthUserResponse'
+      summary: Deauth user
+      tags:
+      - users
+  /docs:
+    get:
+      consumes:
+      - application/json
+      description: Returns documents information
+      parameters:
+      - description: User token
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: User login
+        in: query
+        name: login
+        type: string
+      - description: 'Count of documents to return. Default: 10'
+        in: query
+        name: limit
+        type: integer
+      - description: Name of document
+        in: query
+        name: name
+        type: string
+      - description: Mime of document
+        in: query
+        name: mime
+        type: string
+      - description: Is file
+        in: query
+        name: file
+        type: boolean
+      - description: Is public
+        in: query
+        name: public
+        type: boolean
+      - description: Creation time of document
+        in: query
+        name: created
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response-views_GetDocsInfoResponse'
+      summary: Get docs info
+      tags:
+      - docs
+    post:
+      consumes:
+      - application/json
+      description: Uploads document
+      parameters:
+      - description: File of document
+        in: formData
+        name: file
+        required: true
+        type: file
+      - description: Meta data of document
+        in: formData
+        name: meta
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response-views_UploadDocResponse'
+      summary: Upload doc
+      tags:
+      - docs
+  /docs/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes document
+      parameters:
+      - description: Token of user
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: ID of document
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: Delete doc
+      tags:
+      - docs
+    get:
+      consumes:
+      - application/json
+      description: Returns document
+      parameters:
+      - description: Token of user
+        in: query
+        name: token
+        required: true
+        type: string
+      - description: ID of document
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: file
+      summary: Get doc
+      tags:
+      - docs
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Registers user
+      parameters:
+      - description: Admin token and users login and password to register it with
+        in: body
+        name: register_user_data
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.RegisterUserController'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/server.Response-views_RegisterUserResponse'
+      summary: Register user
+      tags:
+      - users
+swagger: "2.0"
