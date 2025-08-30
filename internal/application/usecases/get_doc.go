@@ -5,21 +5,19 @@ import (
 	"slices"
 
 	"document_manager/internal/application/domain"
-	"document_manager/internal/application/dto"
 )
 
 type GetDocHandler struct {
-	usersRepo        domain.UsersRepository
-	docsRepo         domain.DocsRepository
-	docsQueryService dto.DocsQueryService
-	docsCache        domain.DocsCache
-	tm               domain.TokenManager
+	usersRepo domain.UsersRepository
+	docsRepo  domain.DocsRepository
+
+	docsCache domain.DocsCache
+	tm        domain.TokenManager
 }
 
 func NewGetDocHandler(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
-	docsQueryService dto.DocsQueryService,
 	docsCache domain.DocsCache,
 	tm domain.TokenManager,
 ) *GetDocHandler {
@@ -31,10 +29,6 @@ func NewGetDocHandler(
 		panic("docs repository is nil")
 	}
 
-	if docsQueryService == nil {
-		panic("docs query service is nil")
-	}
-
 	if docsCache == nil {
 		panic("docs cache is nil")
 	}
@@ -44,15 +38,14 @@ func NewGetDocHandler(
 	}
 
 	return &GetDocHandler{
-		usersRepo:        usersRepo,
-		docsRepo:         docsRepo,
-		docsQueryService: docsQueryService,
-		docsCache:        docsCache,
-		tm:               tm,
+		usersRepo: usersRepo,
+		docsRepo:  docsRepo,
+		docsCache: docsCache,
+		tm:        tm,
 	}
 }
 
-func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*dto.Doc, error) {
+func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*domain.Doc, error) {
 	if tokenString == "" {
 		return nil, ErrEmptyToken
 	}
@@ -75,7 +68,7 @@ func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*d
 		return nil, ErrTokenExpired
 	}
 
-	docInfo, err := h.docsRepo.Get(ctx, id)
+	docInfo, err := h.docsRepo.GetDocInfoByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}
@@ -90,10 +83,10 @@ func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*d
 	}
 
 	if data != nil {
-		return &dto.Doc{Mime: docInfo.Mime, Data: data}, nil
+		return domain.NewDoc(docInfo.Mime, data), nil
 	}
 
-	doc, err := h.docsQueryService.GetDocByID(ctx, id)
+	doc, err := h.docsRepo.GetDocByID(ctx, id)
 	if err != nil {
 		return nil, err
 	}

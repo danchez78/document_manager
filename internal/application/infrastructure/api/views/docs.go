@@ -1,6 +1,6 @@
 package views
 
-import "document_manager/internal/application/dto"
+import "document_manager/internal/application/domain"
 
 type UploadDocResponse struct {
 	File string `json:"file"`
@@ -20,14 +20,26 @@ type DocInfo struct {
 	Grant   []string `json:"grant"`
 }
 
+func NewDocInfo(docInfo *domain.DocInfo) DocInfo {
+	return DocInfo{
+		ID:      docInfo.ID,
+		Name:    docInfo.Name,
+		Mime:    docInfo.Mime,
+		File:    docInfo.File,
+		Public:  docInfo.Public,
+		Created: docInfo.Created,
+		Grant:   docInfo.Grant,
+	}
+}
+
 type GetDocsInfoResponse struct {
 	Docs []DocInfo `json:"docs"`
 }
 
-func NewGetDocsInfoResponse(docsInfo []*dto.DocInfo) GetDocsInfoResponse {
+func NewGetDocsInfoResponse(docsInfo []*domain.DocInfo) GetDocsInfoResponse {
 	docs := make([]DocInfo, 0, len(docsInfo))
 	for _, docInfo := range docsInfo {
-		docs = append(docs, DocInfo(*docInfo))
+		docs = append(docs, NewDocInfo(docInfo))
 	}
 
 	return GetDocsInfoResponse{Docs: docs}

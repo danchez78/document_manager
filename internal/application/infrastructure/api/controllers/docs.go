@@ -1,12 +1,12 @@
 package controllers
 
 import (
-	"document_manager/internal/application/domain"
-	"document_manager/internal/application/dto"
 	"encoding/json"
 	"io"
 
 	"github.com/labstack/echo/v4"
+
+	"document_manager/internal/application/domain"
 )
 
 type Meta struct {
@@ -89,8 +89,8 @@ type DocFilters struct {
 	Created string `query:"created"`
 }
 
-func (f *DocFilters) ToDomain() *dto.DocFilters {
-	return &dto.DocFilters{
+func (f *DocFilters) ToDomain() *domain.DocFilters {
+	return &domain.DocFilters{
 		Name:    f.Name,
 		Mime:    f.Mime,
 		File:    f.File,

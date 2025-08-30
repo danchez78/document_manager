@@ -34,11 +34,10 @@ func Init(
 
 	usersRepo := postgres.NewUsersRepository(pg_client)
 	docRepo := postgres.NewDocsRepository(pg_client)
-	docsQueryService := postgres.NewDocsQueryService(pg_client)
 
 	docsCache := redis.NewDocsCache(rd_client)
 
-	uc := usecases.NewUseCases(cfg.AdminToken, usersRepo, docRepo, docsQueryService, docsCache, tm)
+	uc := usecases.NewUseCases(cfg.AdminToken, usersRepo, docRepo, docsCache, tm)
 	routes.Make(srv, uc)
 
 	return nil

@@ -1,11 +1,11 @@
 package models
 
 import (
-	"document_manager/internal/application/domain"
-	"document_manager/internal/application/dto"
 	"time"
 
 	"github.com/google/uuid"
+
+	"document_manager/internal/application/domain"
 )
 
 type DocInput struct {
@@ -64,8 +64,8 @@ type DocInfoPreview struct {
 	Grant   []string
 }
 
-func (m *DocInfoPreview) ToDTO() *dto.DocInfo {
-	return &dto.DocInfo{
+func (m *DocInfoPreview) ToDomain() *domain.DocInfo {
+	return &domain.DocInfo{
 		ID:      m.ID,
 		Name:    m.Name,
 		Mime:    m.Mime,
@@ -78,10 +78,10 @@ func (m *DocInfoPreview) ToDTO() *dto.DocInfo {
 
 type DocInfoPreviews []*DocInfoPreview
 
-func (ms DocInfoPreviews) ToDTO() []*dto.DocInfo {
-	docsInfo := make([]*dto.DocInfo, 0, len(ms))
+func (ms DocInfoPreviews) ToDomain() []*domain.DocInfo {
+	docsInfo := make([]*domain.DocInfo, 0, len(ms))
 	for _, m := range ms {
-		docsInfo = append(docsInfo, m.ToDTO())
+		docsInfo = append(docsInfo, m.ToDomain())
 	}
 	return docsInfo
 }
@@ -91,8 +91,8 @@ type DocPreview struct {
 	Mime string
 }
 
-func (p *DocPreview) ToDTO() *dto.Doc {
-	return &dto.Doc{
+func (p *DocPreview) ToDomain() *domain.Doc {
+	return &domain.Doc{
 		Data: p.Data,
 		Mime: p.Mime,
 	}

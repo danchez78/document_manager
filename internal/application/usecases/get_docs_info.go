@@ -4,36 +4,35 @@ import (
 	"context"
 
 	"document_manager/internal/application/domain"
-	"document_manager/internal/application/dto"
 )
 
 type GetDocsInfoHandler struct {
-	usersRepo        domain.UsersRepository
-	docsQueryService dto.DocsQueryService
-	tm               domain.TokenManager
+	usersRepo domain.UsersRepository
+	docsRepo  domain.DocsRepository
+	tm        domain.TokenManager
 }
 
 func NewGetDocsInfoHandler(
 	usersRepo domain.UsersRepository,
-	docsQueryService dto.DocsQueryService,
+	docsRepo domain.DocsRepository,
 	tm domain.TokenManager,
 ) *GetDocsInfoHandler {
 	if usersRepo == nil {
 		panic("users repository is nil")
 	}
 
-	if docsQueryService == nil {
-		panic("docs query service is nil")
+	if docsRepo == nil {
+		panic("docs repository is nil")
 	}
 
 	if tm == nil {
 		panic("token manager is nil")
 	}
 
-	return &GetDocsInfoHandler{usersRepo: usersRepo, docsQueryService: docsQueryService, tm: tm}
+	return &GetDocsInfoHandler{usersRepo: usersRepo, docsRepo: docsRepo, tm: tm}
 }
 
-func (h *GetDocsInfoHandler) Execute(ctx context.Context, tokenString, login string, limit int, docFilters *dto.DocFilters) ([]*dto.DocInfo, error) {
+func (h *GetDocsInfoHandler) Execute(ctx context.Context, tokenString, login string, limit int, docFilters *domain.DocFilters) ([]*domain.DocInfo, error) {
 	if tokenString == "" {
 		return nil, ErrEmptyToken
 	}
@@ -60,7 +59,7 @@ func (h *GetDocsInfoHandler) Execute(ctx context.Context, tokenString, login str
 		return nil, ErrTokenExpired
 	}
 
-	docsInfo, err := h.docsQueryService.GetDocsInfo(ctx, login, limit, docFilters)
+	docsInfo, err := h.docsRepo.GetDocsInfo(ctx, login, limit, docFilters)
 	if err != nil {
 		return nil, err
 	}

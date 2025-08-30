@@ -2,7 +2,6 @@ package usecases
 
 import (
 	"document_manager/internal/application/domain"
-	"document_manager/internal/application/dto"
 )
 
 type Users struct {
@@ -27,7 +26,6 @@ func NewUseCases(
 	adminToken string,
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
-	docsQueryService dto.DocsQueryService,
 	docsCache domain.DocsCache,
 	tm domain.TokenManager,
 ) *UseCases {
@@ -39,8 +37,8 @@ func NewUseCases(
 		},
 		Docs: &Docs{
 			UploadDocHandler:   NewUploadDocHandler(usersRepo, docsRepo, docsCache, tm),
-			GetDocsInfoHandler: NewGetDocsInfoHandler(usersRepo, docsQueryService, tm),
-			GetDocHandler:      NewGetDocHandler(usersRepo, docsRepo, docsQueryService, docsCache, tm),
+			GetDocsInfoHandler: NewGetDocsInfoHandler(usersRepo, docsRepo, tm),
+			GetDocHandler:      NewGetDocHandler(usersRepo, docsRepo, docsCache, tm),
 			DeleteDocHandler:   NewDeleteDocHandler(usersRepo, docsRepo, tm),
 		},
 	}

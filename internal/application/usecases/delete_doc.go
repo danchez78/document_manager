@@ -56,7 +56,7 @@ func (h *DeleteDocHandler) Execute(ctx context.Context, tokenString, id string) 
 		return ErrTokenExpired
 	}
 
-	docInfo, err := h.docsRepo.Get(ctx, id)
+	docInfo, err := h.docsRepo.GetDocInfoByID(ctx, id)
 	if err != nil {
 		return err
 	}
