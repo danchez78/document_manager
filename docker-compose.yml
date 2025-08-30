@@ -1,0 +1,53 @@
+services:
+  document_manager:
+    image: document_manager
+    container_name: document_manager
+    build: .
+    restart: always
+    ports:
+      - "50000:50000"
+    networks:
+      - document_manager_bridge
+    volumes:
+      - ./config/config.yml:/app/config/config.yml
+    environment:
+      CONFIG_PATH: /app/config/config.yml
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres_document_manager
+    restart: always
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "1234"
+      POSTGRES_DB: document_manager
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+      - ./db/migrations/init.up.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - document_manager_bridge
+
+  redis:
+    image: redis:latest
+    container_name: redis_document_manager
+    ports:
+      - "6379:6379"
+    command: [
+      "redis-server",
+      "--maxmemory", "256mb",
+      "--maxmemory-policy", "allkeys-lru"
+    ]
+    volumes:
+      - /redis_data:/data
+    restart: unless-stopped
+    networks:
+      - document_manager_bridge
+
+networks:
+  document_manager_bridge:
+    driver: bridge

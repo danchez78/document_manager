@@ -1,0 +1,12 @@
+# Exclude all files
+**
+
+# Add only required files
+!api/
+!cmd/
+!config/
+!internal/
+!db/
+!go.mod
+!go.sum
+!entrypoint.sh
