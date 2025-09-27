@@ -27,19 +27,18 @@ func NewUseCases(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
 	docsCache domain.DocsCache,
-	tm domain.TokenManager,
 ) *UseCases {
 	return &UseCases{
 		Users: &Users{
 			RegisterUserHandler: NewRegisterUserHandler(adminToken, usersRepo),
-			AuthUserHandler:     NewAuthUserHandler(usersRepo, tm),
-			DeauthUserHandler:   NewDeauthUserHandler(usersRepo, tm),
+			AuthUserHandler:     NewAuthUserHandler(usersRepo),
+			DeauthUserHandler:   NewDeauthUserHandler(usersRepo),
 		},
 		Docs: &Docs{
-			UploadDocHandler:   NewUploadDocHandler(usersRepo, docsRepo, docsCache, tm),
-			GetDocsInfoHandler: NewGetDocsInfoHandler(usersRepo, docsRepo, tm),
-			GetDocHandler:      NewGetDocHandler(usersRepo, docsRepo, docsCache, tm),
-			DeleteDocHandler:   NewDeleteDocHandler(usersRepo, docsRepo, tm),
+			UploadDocHandler:   NewUploadDocHandler(usersRepo, docsRepo, docsCache),
+			GetDocsInfoHandler: NewGetDocsInfoHandler(usersRepo, docsRepo),
+			GetDocHandler:      NewGetDocHandler(usersRepo, docsRepo, docsCache),
+			DeleteDocHandler:   NewDeleteDocHandler(usersRepo, docsRepo),
 		},
 	}
 }

@@ -7,11 +7,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"document_manager/internal/application/infrastructure/api/controllers"
-	"document_manager/internal/application/infrastructure/api/error_handlers"
-	"document_manager/internal/application/infrastructure/api/views"
+	"document_manager/internal/application/infrastructure/server"
+	"document_manager/internal/application/infrastructure/server/api/controllers"
+	"document_manager/internal/application/infrastructure/server/api/error_handlers"
+	"document_manager/internal/application/infrastructure/server/api/views"
 	"document_manager/internal/application/usecases"
-	"document_manager/internal/common/server"
 )
 
 type docsHandler struct {
@@ -27,7 +27,7 @@ type docsHandler struct {
 //	@Produce		json
 //	@Param			file	formData	file	true	"File of document"
 //	@Param			meta	formData	file	true	"Meta data of document"
-//	@Success		200		{object}	server.Response[views.UploadDocResponse]
+//	@Success		200		{object}	views.Response[views.UploadDocResponse]
 //	@Router			/docs [post]
 func (h *docsHandler) uploadDoc(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -36,7 +36,7 @@ func (h *docsHandler) uploadDoc(c echo.Context) error {
 	if err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	docDomain := req.UploadDocController.ToDomainDoc()
@@ -47,7 +47,7 @@ func (h *docsHandler) uploadDoc(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	return server.ReturnResponse(c, views.NewUploadDocResponse(docDomain.Name))
+	return views.ReturnResponse(c, views.NewUploadDocResponse(docDomain.Name))
 }
 
 // getDocsInfo godoc
@@ -65,7 +65,7 @@ func (h *docsHandler) uploadDoc(c echo.Context) error {
 //	@Param			file	query		bool	false	"Is file"
 //	@Param			public	query		bool	false	"Is public"
 //	@Param			created	query		string	false	"Creation time of document"
-//	@Success		200		{object}	server.Response[views.GetDocsInfoResponse]
+//	@Success		200		{object}	views.Response[views.GetDocsInfoResponse]
 //	@Router			/docs [get]
 func (h *docsHandler) getDocsInfo(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -74,7 +74,7 @@ func (h *docsHandler) getDocsInfo(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	docsInfo, err := h.uc.Docs.GetDocsInfoHandler.Execute(ctx, req.Token, req.Login, req.Limit, req.DocFilters.ToDomain())
@@ -84,7 +84,7 @@ func (h *docsHandler) getDocsInfo(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	return server.ReturnResponse(c, views.NewGetDocsInfoResponse(docsInfo))
+	return views.ReturnResponse(c, views.NewGetDocsInfoResponse(docsInfo))
 }
 
 // getDoc godoc
@@ -105,7 +105,7 @@ func (h *docsHandler) getDoc(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	doc, err := h.uc.Docs.GetDocHandler.Execute(ctx, req.Token, req.ID)
@@ -121,13 +121,13 @@ func (h *docsHandler) getDoc(c echo.Context) error {
 		if err := json.Unmarshal(doc.Data, &data); err != nil {
 			log.Printf("failed to unmarshal document. Reason: %v", err)
 
-			return server.ReturnError(c, http.StatusInternalServerError, err)
+			return views.ReturnError(c, http.StatusInternalServerError, err)
 		}
 
-		return server.ReturnData(c, data)
+		return views.ReturnData(c, data)
 	}
 
-	return server.ReturnFile(c, doc.Mime, doc.Data)
+	return views.ReturnFile(c, doc.Mime, doc.Data)
 }
 
 // deleteDoc godoc
@@ -148,17 +148,17 @@ func (h *docsHandler) deleteDoc(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	err := h.uc.Docs.DeleteDocHandler.Execute(ctx, req.Token, req.ID)
 	if err != nil {
 		log.Printf("failed to delete doc. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusInternalServerError, err)
+		return views.ReturnError(c, http.StatusInternalServerError, err)
 	}
 
-	return server.ReturnResponse(c, views.NewDeleteDocResponse(req.ID))
+	return views.ReturnResponse(c, views.NewDeleteDocResponse(req.ID))
 }
 
 func makeDocsRoutes(srv *server.Server, uc *usecases.UseCases) {

@@ -3,20 +3,19 @@ package redis
 import (
 	"context"
 	"document_manager/internal/application/domain"
-	"document_manager/internal/common/redis_client"
 
 	"github.com/redis/go-redis/v9"
 )
 
 type docsCache struct {
-	client *redis_client.Client
+	client *Client
 }
 
 var (
 	_ domain.DocsCache = (*docsCache)(nil)
 )
 
-func NewDocsCache(client *redis_client.Client) domain.DocsCache {
+func NewDocsCache(client *Client) domain.DocsCache {
 	if client == nil {
 		panic("redis client is nil")
 	}

@@ -2,8 +2,9 @@ package usecases
 
 import (
 	"context"
-	"document_manager/internal/application/domain"
 	"fmt"
+
+	"document_manager/internal/application/domain"
 )
 
 type RegisterUserHandler struct {

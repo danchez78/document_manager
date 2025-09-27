@@ -1,7 +1,8 @@
-setup:
-	go run github.com/swaggo/swag/cmd/swag@v1.16 \
-		f -d "internal/common/server,internal/application/infrastructure/api"
-	go run github.com/swaggo/swag/cmd/swag@v1.16 \
-		i -g "server.go" -d "internal/common/server,internal/application/infrastructure/api" --output api
-	go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	golangci-lint run
+generate_api:
+	go run github.com/swaggo/swag/cmd/swag@latest \
+		f -d "internal/application/infrastructure/server"
+	go run github.com/swaggo/swag/cmd/swag@latest \
+		i -g "server.go" -d "internal/application/infrastructure/server" --output api
+lint:
+	go run github.com/golangci/golangci-lint/cmd/golangci-lint@latest \
+		run

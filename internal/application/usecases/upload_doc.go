@@ -10,14 +10,12 @@ type UploadDocHandler struct {
 	usersRepo domain.UsersRepository
 	docsRepo  domain.DocsRepository
 	docsCache domain.DocsCache
-	tm        domain.TokenManager
 }
 
 func NewUploadDocHandler(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
 	docsCache domain.DocsCache,
-	tm domain.TokenManager,
 ) *UploadDocHandler {
 	if usersRepo == nil {
 		panic("user repository is nil")
@@ -31,14 +29,9 @@ func NewUploadDocHandler(
 		panic("docs cache is nil")
 	}
 
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
 	return &UploadDocHandler{usersRepo: usersRepo,
 		docsRepo:  docsRepo,
 		docsCache: docsCache,
-		tm:        tm,
 	}
 }
 
@@ -47,7 +40,7 @@ func (h *UploadDocHandler) Execute(ctx context.Context, doc *domain.DocInput, to
 		return ErrEmptyToken
 	}
 
-	token, err := h.tm.ParseToken(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return err
 	}

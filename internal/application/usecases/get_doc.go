@@ -12,14 +12,12 @@ type GetDocHandler struct {
 	docsRepo  domain.DocsRepository
 
 	docsCache domain.DocsCache
-	tm        domain.TokenManager
 }
 
 func NewGetDocHandler(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
 	docsCache domain.DocsCache,
-	tm domain.TokenManager,
 ) *GetDocHandler {
 	if usersRepo == nil {
 		panic("users repository is nil")
@@ -33,15 +31,10 @@ func NewGetDocHandler(
 		panic("docs cache is nil")
 	}
 
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
 	return &GetDocHandler{
 		usersRepo: usersRepo,
 		docsRepo:  docsRepo,
 		docsCache: docsCache,
-		tm:        tm,
 	}
 }
 
@@ -50,11 +43,10 @@ func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*d
 		return nil, ErrEmptyToken
 	}
 
-	token, err := h.tm.ParseToken(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return nil, err
 	}
-
 	if token.IsExpired() {
 		return nil, ErrTokenExpired
 	}

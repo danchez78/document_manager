@@ -8,19 +8,14 @@ import (
 
 type AuthUserHandler struct {
 	usersRepo domain.UsersRepository
-	tm        domain.TokenManager
 }
 
-func NewAuthUserHandler(usersRepo domain.UsersRepository, tm domain.TokenManager) *AuthUserHandler {
+func NewAuthUserHandler(usersRepo domain.UsersRepository) *AuthUserHandler {
 	if usersRepo == nil {
 		panic("users repository is nil")
 	}
 
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
-	return &AuthUserHandler{usersRepo: usersRepo, tm: tm}
+	return &AuthUserHandler{usersRepo: usersRepo}
 }
 
 func (h *AuthUserHandler) Execute(ctx context.Context, login, password string) (string, error) {
@@ -42,16 +37,16 @@ func (h *AuthUserHandler) Execute(ctx context.Context, login, password string) (
 		return "", ErrIncorrectPasswordProvided
 	}
 
-	token, err := h.tm.GenerateToken(user.ID)
+	token, err := domain.GenerateToken(user.ID)
 	if err != nil {
 		return "", err
 	}
 
-	user.Token = token
+	user.Token = token.String
 
 	if err := h.usersRepo.Update(ctx, user); err != nil {
 		return "", err
 	}
 
-	return token, nil
+	return user.Token, nil
 }

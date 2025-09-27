@@ -9,13 +9,11 @@ import (
 type GetDocsInfoHandler struct {
 	usersRepo domain.UsersRepository
 	docsRepo  domain.DocsRepository
-	tm        domain.TokenManager
 }
 
 func NewGetDocsInfoHandler(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
-	tm domain.TokenManager,
 ) *GetDocsInfoHandler {
 	if usersRepo == nil {
 		panic("users repository is nil")
@@ -25,11 +23,7 @@ func NewGetDocsInfoHandler(
 		panic("docs repository is nil")
 	}
 
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
-	return &GetDocsInfoHandler{usersRepo: usersRepo, docsRepo: docsRepo, tm: tm}
+	return &GetDocsInfoHandler{usersRepo: usersRepo, docsRepo: docsRepo}
 }
 
 func (h *GetDocsInfoHandler) Execute(ctx context.Context, tokenString, login string, limit int, docFilters *domain.DocFilters) ([]*domain.DocInfo, error) {
@@ -37,7 +31,7 @@ func (h *GetDocsInfoHandler) Execute(ctx context.Context, tokenString, login str
 		return nil, ErrEmptyToken
 	}
 
-	token, err := h.tm.ParseToken(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return nil, err
 	}

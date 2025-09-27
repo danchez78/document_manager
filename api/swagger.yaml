@@ -16,31 +16,6 @@ definitions:
       token:
         type: string
     type: object
-  server.Response-views_AuthUserResponse:
-    properties:
-      response:
-        $ref: '#/definitions/views.AuthUserResponse'
-    type: object
-  server.Response-views_DeauthUserResponse:
-    properties:
-      response:
-        $ref: '#/definitions/views.DeauthUserResponse'
-    type: object
-  server.Response-views_GetDocsInfoResponse:
-    properties:
-      response:
-        $ref: '#/definitions/views.GetDocsInfoResponse'
-    type: object
-  server.Response-views_RegisterUserResponse:
-    properties:
-      response:
-        $ref: '#/definitions/views.RegisterUserResponse'
-    type: object
-  server.Response-views_UploadDocResponse:
-    properties:
-      response:
-        $ref: '#/definitions/views.UploadDocResponse'
-    type: object
   views.AuthUserResponse:
     properties:
       token:
@@ -81,6 +56,31 @@ definitions:
       login:
         type: string
     type: object
+  views.Response-views_AuthUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.AuthUserResponse'
+    type: object
+  views.Response-views_DeauthUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.DeauthUserResponse'
+    type: object
+  views.Response-views_GetDocsInfoResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.GetDocsInfoResponse'
+    type: object
+  views.Response-views_RegisterUserResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.RegisterUserResponse'
+    type: object
+  views.Response-views_UploadDocResponse:
+    properties:
+      response:
+        $ref: '#/definitions/views.UploadDocResponse'
+    type: object
   views.UploadDocResponse:
     properties:
       file:
@@ -111,7 +111,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response-views_AuthUserResponse'
+            $ref: '#/definitions/views.Response-views_AuthUserResponse'
       summary: Auth user
       tags:
       - users
@@ -126,7 +126,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response-views_DeauthUserResponse'
+            $ref: '#/definitions/views.Response-views_DeauthUserResponse'
       summary: Deauth user
       tags:
       - users
@@ -175,7 +175,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response-views_GetDocsInfoResponse'
+            $ref: '#/definitions/views.Response-views_GetDocsInfoResponse'
       summary: Get docs info
       tags:
       - docs
@@ -200,7 +200,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response-views_UploadDocResponse'
+            $ref: '#/definitions/views.Response-views_UploadDocResponse'
       summary: Upload doc
       tags:
       - docs
@@ -273,7 +273,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/server.Response-views_RegisterUserResponse'
+            $ref: '#/definitions/views.Response-views_RegisterUserResponse'
       summary: Register user
       tags:
       - users

@@ -1,8 +1,8 @@
 package routes
 
 import (
+	"document_manager/internal/application/infrastructure/server"
 	"document_manager/internal/application/usecases"
-	"document_manager/internal/common/server"
 )
 
 func Make(

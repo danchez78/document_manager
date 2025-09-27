@@ -7,11 +7,10 @@ import (
 
 	"golang.org/x/sync/errgroup"
 
+	_ "document_manager/api"
 	"document_manager/config"
 	"document_manager/internal/application"
-	"document_manager/internal/common/server"
-
-	_ "document_manager/api"
+	"document_manager/internal/application/infrastructure/server"
 )
 
 const (

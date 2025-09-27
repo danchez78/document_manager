@@ -6,11 +6,11 @@ import (
 
 	"github.com/labstack/echo/v4"
 
-	"document_manager/internal/application/infrastructure/api/controllers"
-	"document_manager/internal/application/infrastructure/api/error_handlers"
-	"document_manager/internal/application/infrastructure/api/views"
+	"document_manager/internal/application/infrastructure/server"
+	"document_manager/internal/application/infrastructure/server/api/controllers"
+	"document_manager/internal/application/infrastructure/server/api/error_handlers"
+	"document_manager/internal/application/infrastructure/server/api/views"
 	"document_manager/internal/application/usecases"
-	"document_manager/internal/common/server"
 )
 
 type userHandler struct {
@@ -25,7 +25,7 @@ type userHandler struct {
 //	@Accept			json
 //	@Produce		json
 //	@Param			register_user_data	body		controllers.RegisterUserController	true	"Admin token and users login and password to register it with"
-//	@Success		200					{object}	server.Response[views.RegisterUserResponse]
+//	@Success		200					{object}	views.Response[views.RegisterUserResponse]
 //	@Router			/register [post]
 func (h *userHandler) registerUser(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -34,7 +34,7 @@ func (h *userHandler) registerUser(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	login, err := h.uc.Users.RegisterUserHandler.Execute(ctx, req.Token, req.Login, req.Password)
@@ -44,7 +44,7 @@ func (h *userHandler) registerUser(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	return server.ReturnResponse(c, views.NewRegisterUserResponse(login))
+	return views.ReturnResponse(c, views.NewRegisterUserResponse(login))
 }
 
 // authUser godoc
@@ -55,7 +55,7 @@ func (h *userHandler) registerUser(c echo.Context) error {
 //	@Accept			json
 //	@Produce		json
 //	@Param			auth_user_data	body		controllers.AuthUserController	true	"Login and password"
-//	@Success		200				{object}	server.Response[views.AuthUserResponse]
+//	@Success		200				{object}	views.Response[views.AuthUserResponse]
 //	@Router			/auth [post]
 func (h *userHandler) authUser(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -64,7 +64,7 @@ func (h *userHandler) authUser(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	token, err := h.uc.Users.AuthUserHandler.Execute(ctx, req.Login, req.Password)
@@ -74,7 +74,7 @@ func (h *userHandler) authUser(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	return server.ReturnResponse(c, views.NewAuthUserResponse(token))
+	return views.ReturnResponse(c, views.NewAuthUserResponse(token))
 }
 
 // deauthUser godoc
@@ -84,7 +84,7 @@ func (h *userHandler) authUser(c echo.Context) error {
 //	@Tags			users
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{object}	server.Response[views.DeauthUserResponse]
+//	@Success		200	{object}	views.Response[views.DeauthUserResponse]
 //	@Router			/auth/{token} [delete]
 func (h *userHandler) deauthUser(c echo.Context) error {
 	ctx := c.Request().Context()
@@ -93,7 +93,7 @@ func (h *userHandler) deauthUser(c echo.Context) error {
 	if err := c.Bind(&req); err != nil {
 		log.Printf("failed to decode request. Reason: %v", err)
 
-		return server.ReturnError(c, http.StatusBadRequest, err)
+		return views.ReturnError(c, http.StatusBadRequest, err)
 	}
 
 	err := h.uc.Users.DeauthUserHandler.Execute(ctx, req.Token)
@@ -103,7 +103,7 @@ func (h *userHandler) deauthUser(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	return server.ReturnResponse(c, views.NewDeauthUserResponse(req.Token))
+	return views.ReturnResponse(c, views.NewDeauthUserResponse(req.Token))
 }
 
 func makeUsersRoutes(srv *server.Server, uc *usecases.UseCases) {

@@ -8,20 +8,19 @@ import (
 
 	"document_manager/internal/application/domain"
 	"document_manager/internal/application/infrastructure/postgres/models"
-	"document_manager/internal/common/postgres_client"
 
 	"github.com/jackc/pgx/v5"
 )
 
 type docsRepository struct {
-	client *postgres_client.Client
+	client *Client
 }
 
 var (
 	_ domain.DocsRepository = (*docsRepository)(nil)
 )
 
-func NewDocsRepository(client *postgres_client.Client) domain.DocsRepository {
+func NewDocsRepository(client *Client) domain.DocsRepository {
 	if client == nil {
 		panic("postgres client is nil")
 	}

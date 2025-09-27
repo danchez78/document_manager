@@ -7,21 +7,20 @@ import (
 
 	"document_manager/internal/application/domain"
 	"document_manager/internal/application/infrastructure/postgres/models"
-	"document_manager/internal/common/postgres_client"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 type usersRepository struct {
-	client *postgres_client.Client
+	client *Client
 }
 
 var (
 	_ domain.UsersRepository = (*usersRepository)(nil)
 )
 
-func NewUsersRepository(client *postgres_client.Client) domain.UsersRepository {
+func NewUsersRepository(client *Client) domain.UsersRepository {
 	if client == nil {
 		panic("postgres client is nil")
 	}

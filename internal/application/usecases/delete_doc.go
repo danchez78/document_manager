@@ -10,13 +10,11 @@ import (
 type DeleteDocHandler struct {
 	usersRepo domain.UsersRepository
 	docsRepo  domain.DocsRepository
-	tm        domain.TokenManager
 }
 
 func NewDeleteDocHandler(
 	usersRepo domain.UsersRepository,
 	docsRepo domain.DocsRepository,
-	tm domain.TokenManager,
 ) *DeleteDocHandler {
 	if usersRepo == nil {
 		panic("users repository is nil")
@@ -26,11 +24,7 @@ func NewDeleteDocHandler(
 		panic("docs repository is nil")
 	}
 
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
-	return &DeleteDocHandler{usersRepo: usersRepo, docsRepo: docsRepo, tm: tm}
+	return &DeleteDocHandler{usersRepo: usersRepo, docsRepo: docsRepo}
 }
 
 func (h *DeleteDocHandler) Execute(ctx context.Context, tokenString, id string) error {
@@ -38,7 +32,7 @@ func (h *DeleteDocHandler) Execute(ctx context.Context, tokenString, id string) 
 		return ErrEmptyToken
 	}
 
-	token, err := h.tm.ParseToken(tokenString)
+	token, err := domain.ParseToken(tokenString)
 	if err != nil {
 		return err
 	}

@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_AuthUserResponse"
+                            "$ref": "#/definitions/views.Response-views_AuthUserResponse"
                         }
                     }
                 }
@@ -66,7 +66,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_DeauthUserResponse"
+                            "$ref": "#/definitions/views.Response-views_DeauthUserResponse"
                         }
                     }
                 }
@@ -140,7 +140,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_GetDocsInfoResponse"
+                            "$ref": "#/definitions/views.Response-views_GetDocsInfoResponse"
                         }
                     }
                 }
@@ -177,7 +177,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_UploadDocResponse"
+                            "$ref": "#/definitions/views.Response-views_UploadDocResponse"
                         }
                     }
                 }
@@ -287,7 +287,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_RegisterUserResponse"
+                            "$ref": "#/definitions/views.Response-views_RegisterUserResponse"
                         }
                     }
                 }
@@ -317,46 +317,6 @@ const docTemplate = `{
                 },
                 "token": {
                     "type": "string"
-                }
-            }
-        },
-        "server.Response-views_AuthUserResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "$ref": "#/definitions/views.AuthUserResponse"
-                }
-            }
-        },
-        "server.Response-views_DeauthUserResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "$ref": "#/definitions/views.DeauthUserResponse"
-                }
-            }
-        },
-        "server.Response-views_GetDocsInfoResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "$ref": "#/definitions/views.GetDocsInfoResponse"
-                }
-            }
-        },
-        "server.Response-views_RegisterUserResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "$ref": "#/definitions/views.RegisterUserResponse"
-                }
-            }
-        },
-        "server.Response-views_UploadDocResponse": {
-            "type": "object",
-            "properties": {
-                "response": {
-                    "$ref": "#/definitions/views.UploadDocResponse"
                 }
             }
         },
@@ -419,6 +379,46 @@ const docTemplate = `{
             "properties": {
                 "login": {
                     "type": "string"
+                }
+            }
+        },
+        "views.Response-views_AuthUserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/views.AuthUserResponse"
+                }
+            }
+        },
+        "views.Response-views_DeauthUserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/views.DeauthUserResponse"
+                }
+            }
+        },
+        "views.Response-views_GetDocsInfoResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/views.GetDocsInfoResponse"
+                }
+            }
+        },
+        "views.Response-views_RegisterUserResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/views.RegisterUserResponse"
+                }
+            }
+        },
+        "views.Response-views_UploadDocResponse": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "$ref": "#/definitions/views.UploadDocResponse"
                 }
             }
         },
