@@ -9,7 +9,7 @@ import (
 
 	"document_manager/config"
 	"document_manager/internal/application"
-	"document_manager/internal/common/server"
+	"document_manager/internal/application/infrastructure/api/server"
 
 	_ "document_manager/api"
 )

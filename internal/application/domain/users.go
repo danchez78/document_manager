@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"crypto/subtle"
 	"encoding/base64"
-	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -27,6 +26,10 @@ type User struct {
 	Token          string
 }
 
+func (u *User) Deauthenticate() {
+	u.Token = ""
+}
+
 type UserInput struct {
 	Login    string
 	Password string
@@ -39,7 +42,7 @@ func NewUserInput(login, password string) (*UserInput, error) {
 	}
 
 	if err := u.validate(); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("validating user error: %v", err)
 	}
 
 	return u, nil
@@ -70,18 +73,18 @@ func (u *UserInput) HashPassword() (string, error) {
 	return encodedHash, nil
 }
 
-func (u *UserInput) СomparePasswordAndHash(encodedHash string) (bool, error) {
+func (u *UserInput) ComparePasswordAndHash(encodedHash string) error {
 	p, salt, hash, err := decodeHash(encodedHash)
 	if err != nil {
-		return false, err
+		return err
 	}
 
 	otherHash := argon2.IDKey([]byte(u.Password), salt, p.iterations, p.memory, p.parallelism, p.keyLength)
 
 	if subtle.ConstantTimeCompare(hash, otherHash) == 1 {
-		return true, nil
+		return nil
 	}
-	return false, nil
+	return ErrIncorrectPasswordProvided
 }
 
 func (u *UserInput) validate() error {
@@ -135,11 +138,6 @@ func (u *UserInput) validatePassword() error {
 
 	return nil
 }
-
-var (
-	ErrInvalidHash         = errors.New("the encoded hash is not in the correct format")
-	ErrIncompatibleVersion = errors.New("incompatible version of argon2")
-)
 
 func decodeHash(encodedHash string) (p *params, salt, hash []byte, err error) {
 	vals := strings.Split(encodedHash, "$")

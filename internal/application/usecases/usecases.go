@@ -5,9 +5,9 @@ import (
 )
 
 type Users struct {
-	RegisterUserHandler *RegisterUserHandler
-	AuthUserHandler     *AuthUserHandler
-	DeauthUserHandler   *DeauthUserHandler
+	RegisterUserHandler       *RegisterUserHandler
+	AuthenticateUserHandler   *AuthenticateUserHandler
+	DeauthenticateUserHandler *DeauthenticateUserHandler
 }
 
 type Docs struct {
@@ -28,18 +28,20 @@ func NewUseCases(
 	docsRepo domain.DocsRepository,
 	docsCache domain.DocsCache,
 	tm domain.TokenManager,
+	authenticationService domain.AuthenticationService,
+	authorizationService domain.AuthorizationService,
 ) *UseCases {
 	return &UseCases{
 		Users: &Users{
-			RegisterUserHandler: NewRegisterUserHandler(adminToken, usersRepo),
-			AuthUserHandler:     NewAuthUserHandler(usersRepo, tm),
-			DeauthUserHandler:   NewDeauthUserHandler(usersRepo, tm),
+			RegisterUserHandler:       NewRegisterUserHandler(adminToken, usersRepo),
+			AuthenticateUserHandler:   NewAuthenticateUserHandler(usersRepo, tm),
+			DeauthenticateUserHandler: NewDeauthenticateUserHandler(authenticationService, usersRepo),
 		},
 		Docs: &Docs{
-			UploadDocHandler:   NewUploadDocHandler(usersRepo, docsRepo, docsCache, tm),
-			GetDocsInfoHandler: NewGetDocsInfoHandler(usersRepo, docsRepo, tm),
-			GetDocHandler:      NewGetDocHandler(usersRepo, docsRepo, docsCache, tm),
-			DeleteDocHandler:   NewDeleteDocHandler(usersRepo, docsRepo, tm),
+			UploadDocHandler:   NewUploadDocHandler(authenticationService, docsRepo, docsCache),
+			GetDocsInfoHandler: NewGetDocsInfoHandler(authenticationService, docsRepo),
+			GetDocHandler:      NewGetDocHandler(authenticationService, authorizationService, docsRepo, docsCache),
+			DeleteDocHandler:   NewDeleteDocHandler(authenticationService, authorizationService, docsRepo),
 		},
 	}
 }

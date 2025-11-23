@@ -43,7 +43,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_AuthUserResponse"
+                            "$ref": "#/definitions/document_manager_internal_application_infrastructure_api_server.Response-views_AuthUserResponse"
                         }
                     }
                 }
@@ -66,7 +66,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_DeauthUserResponse"
+                            "$ref": "#/definitions/document_manager_internal_application_infrastructure_api_server.Response-views_DeauthUserResponse"
                         }
                     }
                 }
@@ -140,7 +140,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_GetDocsInfoResponse"
+                            "$ref": "#/definitions/document_manager_internal_application_infrastructure_api_server.Response-views_GetDocsInfoResponse"
                         }
                     }
                 }
@@ -177,7 +177,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_UploadDocResponse"
+                            "$ref": "#/definitions/document_manager_internal_application_infrastructure_api_server.Response-views_UploadDocResponse"
                         }
                     }
                 }
@@ -287,7 +287,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/server.Response-views_RegisterUserResponse"
+                            "$ref": "#/definitions/document_manager_internal_application_infrastructure_api_server.Response-views_RegisterUserResponse"
                         }
                     }
                 }
@@ -320,7 +320,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.Response-views_AuthUserResponse": {
+        "document_manager_internal_application_infrastructure_api_server.Response-views_AuthUserResponse": {
             "type": "object",
             "properties": {
                 "response": {
@@ -328,7 +328,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.Response-views_DeauthUserResponse": {
+        "document_manager_internal_application_infrastructure_api_server.Response-views_DeauthUserResponse": {
             "type": "object",
             "properties": {
                 "response": {
@@ -336,7 +336,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.Response-views_GetDocsInfoResponse": {
+        "document_manager_internal_application_infrastructure_api_server.Response-views_GetDocsInfoResponse": {
             "type": "object",
             "properties": {
                 "response": {
@@ -344,7 +344,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.Response-views_RegisterUserResponse": {
+        "document_manager_internal_application_infrastructure_api_server.Response-views_RegisterUserResponse": {
             "type": "object",
             "properties": {
                 "response": {
@@ -352,7 +352,7 @@ const docTemplate = `{
                 }
             }
         },
-        "server.Response-views_UploadDocResponse": {
+        "document_manager_internal_application_infrastructure_api_server.Response-views_UploadDocResponse": {
             "type": "object",
             "properties": {
                 "response": {

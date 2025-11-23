@@ -1,4 +1,4 @@
-package token_generator
+package token
 
 type Token struct {
 	UserID         string

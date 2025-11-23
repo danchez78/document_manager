@@ -1,6 +1,10 @@
 package views
 
-import "document_manager/internal/application/domain"
+import (
+	"encoding/json"
+
+	"document_manager/internal/application/domain"
+)
 
 type UploadDocResponse struct {
 	File string `json:"file"`
@@ -51,4 +55,15 @@ func NewDeleteDocResponse(id string) DeleteDocResponse {
 	return DeleteDocResponse{
 		id: true,
 	}
+}
+
+func NewGetDoc(doc *domain.Doc) (interface{}, bool, error) {
+	if doc.Mime == "application/json" {
+		var data map[string]interface{}
+		if err := json.Unmarshal(doc.Data, &data); err != nil {
+			return nil, false, err
+		}
+		return data, true, nil
+	}
+	return doc.Data, false, nil
 }

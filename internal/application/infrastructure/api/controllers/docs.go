@@ -101,7 +101,6 @@ func (f *DocFilters) ToDomain() *domain.DocFilters {
 
 type GetDocsInfoRequest struct {
 	Token string `query:"token"`
-	Login string `query:"login"`
 	Limit int    `query:"limit"`
 	DocFilters
 }

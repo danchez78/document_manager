@@ -2,79 +2,50 @@ package usecases
 
 import (
 	"context"
-	"slices"
-
 	"document_manager/internal/application/domain"
 )
 
 type GetDocHandler struct {
-	usersRepo domain.UsersRepository
-	docsRepo  domain.DocsRepository
-
-	docsCache domain.DocsCache
-	tm        domain.TokenManager
+	authenticationService domain.AuthenticationService
+	authorizationService  domain.AuthorizationService
+	docsRepo              domain.DocsRepository
+	docsCache             domain.DocsCache
 }
 
 func NewGetDocHandler(
-	usersRepo domain.UsersRepository,
+	authenticationService domain.AuthenticationService,
+	authorizationService domain.AuthorizationService,
 	docsRepo domain.DocsRepository,
 	docsCache domain.DocsCache,
-	tm domain.TokenManager,
 ) *GetDocHandler {
-	if usersRepo == nil {
-		panic("users repository is nil")
+	if authenticationService == nil {
+		panic("authentication service is nil")
 	}
-
+	if authorizationService == nil {
+		panic("authorization service is nil")
+	}
 	if docsRepo == nil {
 		panic("docs repository is nil")
 	}
-
 	if docsCache == nil {
 		panic("docs cache is nil")
 	}
-
-	if tm == nil {
-		panic("token manager is nil")
-	}
-
 	return &GetDocHandler{
-		usersRepo: usersRepo,
-		docsRepo:  docsRepo,
-		docsCache: docsCache,
-		tm:        tm,
+		authenticationService: authenticationService,
+		authorizationService:  authorizationService,
+		docsRepo:              docsRepo,
+		docsCache:             docsCache,
 	}
 }
 
 func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*domain.Doc, error) {
-	if tokenString == "" {
-		return nil, ErrEmptyToken
-	}
-
-	token, err := h.tm.ParseToken(tokenString)
+	user, err := h.authenticationService.ValidateToken(ctx, tokenString)
 	if err != nil {
 		return nil, err
 	}
 
-	if token.IsExpired() {
-		return nil, ErrTokenExpired
-	}
-
-	user, err := h.usersRepo.GetByID(ctx, token.UserID)
-	if err != nil {
+	if err := h.authorizationService.CheckDocAccess(ctx, user, id); err != nil {
 		return nil, err
-	}
-
-	if token.String != user.Token {
-		return nil, ErrTokenExpired
-	}
-
-	docInfo, err := h.docsRepo.GetDocInfoByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-	if !(docInfo.Public || slices.Contains(docInfo.Grant, user.Login)) {
-		return nil, ErrNoAccessToDoc
 	}
 
 	data, err := h.docsCache.Get(ctx, id)
@@ -83,13 +54,12 @@ func (h *GetDocHandler) Execute(ctx context.Context, tokenString, id string) (*d
 	}
 
 	if data != nil {
+		docInfo, err := h.docsRepo.GetDocInfoByID(ctx, id)
+		if err != nil {
+			return nil, err
+		}
 		return domain.NewDoc(docInfo.Mime, data), nil
 	}
 
-	doc, err := h.docsRepo.GetDocByID(ctx, id)
-	if err != nil {
-		return nil, err
-	}
-
-	return doc, nil
+	return h.docsRepo.GetDocByID(ctx, id)
 }

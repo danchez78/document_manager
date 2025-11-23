@@ -3,7 +3,6 @@ package usecases
 import (
 	"context"
 	"document_manager/internal/application/domain"
-	"fmt"
 )
 
 type RegisterUserHandler struct {
@@ -18,17 +17,14 @@ func NewRegisterUserHandler(adminToken string, usersRepo domain.UsersRepository)
 	return &RegisterUserHandler{adminToken: adminToken, usersRepo: usersRepo}
 }
 
-func (h *RegisterUserHandler) Execute(ctx context.Context, adminToken, login, password string) (string, error) {
+func (h *RegisterUserHandler) Execute(ctx context.Context, adminToken string, userInput *domain.UserInput) (string, error) {
 	if h.adminToken != adminToken {
-		return "", fmt.Errorf("provided admin token is incorrect")
+		return "", domain.ErrIncorrectAdminToken
 	}
 
-	user, err := domain.NewUserInput(login, password)
-	if err != nil {
-		return "", fmt.Errorf("validating user error: %v", err)
-	}
-	if err := h.usersRepo.Save(ctx, user); err != nil {
+	if err := h.usersRepo.Save(ctx, userInput); err != nil {
 		return "", err
 	}
-	return user.Login, nil
+
+	return userInput.Login, nil
 }
