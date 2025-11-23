@@ -1,4 +1,4 @@
-package token_generator
+package token
 
 import (
 	"errors"

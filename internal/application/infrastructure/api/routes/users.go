@@ -6,11 +6,12 @@ import (
 
 	"github.com/labstack/echo/v4"
 
+	"document_manager/internal/application/domain"
 	"document_manager/internal/application/infrastructure/api/controllers"
 	"document_manager/internal/application/infrastructure/api/error_handlers"
+	"document_manager/internal/application/infrastructure/api/server"
 	"document_manager/internal/application/infrastructure/api/views"
 	"document_manager/internal/application/usecases"
-	"document_manager/internal/common/server"
 )
 
 type userHandler struct {
@@ -37,7 +38,14 @@ func (h *userHandler) registerUser(c echo.Context) error {
 		return server.ReturnError(c, http.StatusBadRequest, err)
 	}
 
-	login, err := h.uc.Users.RegisterUserHandler.Execute(ctx, req.Token, req.Login, req.Password)
+	domainUserInput, err := domain.NewUserInput(req.Login, req.Password)
+	if err != nil {
+		log.Printf("failed to handle login and password. Reason: %v", err)
+
+		return error_handlers.HandleError(c, err)
+	}
+
+	login, err := h.uc.Users.RegisterUserHandler.Execute(ctx, req.Token, domainUserInput)
 	if err != nil {
 		log.Printf("failed to register user. Reason: %v", err)
 
@@ -67,7 +75,14 @@ func (h *userHandler) authUser(c echo.Context) error {
 		return server.ReturnError(c, http.StatusBadRequest, err)
 	}
 
-	token, err := h.uc.Users.AuthUserHandler.Execute(ctx, req.Login, req.Password)
+	domainUserInput, err := domain.NewUserInput(req.Login, req.Password)
+	if err != nil {
+		log.Printf("failed to handle login and password. Reason: %v", err)
+
+		return error_handlers.HandleError(c, err)
+	}
+
+	token, err := h.uc.Users.AuthenticateUserHandler.Execute(ctx, domainUserInput)
 	if err != nil {
 		log.Printf("failed to auth user. Reason: %v", err)
 
@@ -96,7 +111,7 @@ func (h *userHandler) deauthUser(c echo.Context) error {
 		return server.ReturnError(c, http.StatusBadRequest, err)
 	}
 
-	err := h.uc.Users.DeauthUserHandler.Execute(ctx, req.Token)
+	err := h.uc.Users.DeauthenticateUserHandler.Execute(ctx, req.Token)
 	if err != nil {
 		log.Printf("failed to deauth user. Reason: %v", err)
 

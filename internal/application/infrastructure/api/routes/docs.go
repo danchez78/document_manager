@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"encoding/json"
 	"log"
 	"net/http"
 
@@ -9,9 +8,9 @@ import (
 
 	"document_manager/internal/application/infrastructure/api/controllers"
 	"document_manager/internal/application/infrastructure/api/error_handlers"
+	"document_manager/internal/application/infrastructure/api/server"
 	"document_manager/internal/application/infrastructure/api/views"
 	"document_manager/internal/application/usecases"
-	"document_manager/internal/common/server"
 )
 
 type docsHandler struct {
@@ -77,7 +76,7 @@ func (h *docsHandler) getDocsInfo(c echo.Context) error {
 		return server.ReturnError(c, http.StatusBadRequest, err)
 	}
 
-	docsInfo, err := h.uc.Docs.GetDocsInfoHandler.Execute(ctx, req.Token, req.Login, req.Limit, req.DocFilters.ToDomain())
+	docsInfo, err := h.uc.Docs.GetDocsInfoHandler.Execute(ctx, req.Token, req.Limit, req.DocFilters.ToDomain())
 	if err != nil {
 		log.Printf("failed to get docs info. Reason: %v", err)
 
@@ -115,15 +114,14 @@ func (h *docsHandler) getDoc(c echo.Context) error {
 		return error_handlers.HandleError(c, err)
 	}
 
-	if doc.Mime == "application/json" {
-		var data map[string]interface{}
+	data, isJSON, err := views.NewGetDoc(doc)
+	if err != nil {
+		log.Printf("failed to present document. Reason: %v", err)
 
-		if err := json.Unmarshal(doc.Data, &data); err != nil {
-			log.Printf("failed to unmarshal document. Reason: %v", err)
+		return error_handlers.HandleError(c, err)
+	}
 
-			return server.ReturnError(c, http.StatusInternalServerError, err)
-		}
-
+	if isJSON {
 		return server.ReturnData(c, data)
 	}
 

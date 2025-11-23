@@ -1,19 +1,18 @@
-package token_manager
+package token
 
 import (
 	"document_manager/internal/application/domain"
-	"document_manager/internal/common/token_generator"
 )
 
 type tokenManager struct {
-	tg *token_generator.TokenGenerator
+	tg *TokenGenerator
 }
 
 var (
 	_ domain.TokenManager = (*tokenManager)(nil)
 )
 
-func NewTokenManager(tg *token_generator.TokenGenerator) *tokenManager {
+func NewTokenManager(tg *TokenGenerator) *tokenManager {
 	if tg == nil {
 		panic("token generator is nil")
 	}

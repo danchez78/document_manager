@@ -7,16 +7,16 @@ import (
 
 	"gopkg.in/yaml.v2"
 
-	"document_manager/internal/common/postgres_client"
-	"document_manager/internal/common/redis_client"
-	"document_manager/internal/common/token_generator"
+	"document_manager/internal/application/infrastructure/postgres"
+	"document_manager/internal/application/infrastructure/redis"
+	"document_manager/internal/application/infrastructure/token"
 )
 
 type Config struct {
-	AdminToken     string                 `yaml:"admin_token"`
-	Postgres       postgres_client.Config `yaml:"postgres"`
-	RedisClient    redis_client.Config    `yaml:"redis"`
-	TokenGenerator token_generator.Config `yaml:"token_generator"`
+	AdminToken     string          `yaml:"admin_token"`
+	Postgres       postgres.Config `yaml:"postgres"`
+	RedisClient    redis.Config    `yaml:"redis"`
+	TokenGenerator token.Config    `yaml:"token_generator"`
 }
 
 func NewConfig(configPath string) (*Config, error) {
@@ -51,7 +51,7 @@ func (c *Config) Validate() error {
 	if c.AdminToken == "" {
 		return errors.New("admin token not found")
 	}
-	if c.Postgres == (postgres_client.Config{}) {
+	if c.Postgres == (postgres.Config{}) {
 		return errors.New("postgres config not found")
 	}
 
