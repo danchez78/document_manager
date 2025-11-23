@@ -11,4 +11,6 @@ var (
 	ErrNoAccessToDoc             = errors.New("provided user has no access to requested document")
 	ErrNoAccessToDeleteDoc       = errors.New("provided user has no access to delete requested document")
 	ErrIncorrectAdminToken       = errors.New("provided admin token is incorrect")
+	ErrUserNotFound              = errors.New("user not found")
+	ErrDocumentNotFound          = errors.New("document not found")
 )

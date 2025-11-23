@@ -21,7 +21,7 @@ type DocInfo struct {
 	File    bool     `json:"file"`
 	Public  bool     `json:"public"`
 	Created string   `json:"created"`
-	Grant   []string `json:"grant"`
+	Grants  []string `json:"grants"`
 }
 
 func NewDocInfo(docInfo *domain.DocInfo) DocInfo {
@@ -32,7 +32,7 @@ func NewDocInfo(docInfo *domain.DocInfo) DocInfo {
 		File:    docInfo.File,
 		Public:  docInfo.Public,
 		Created: docInfo.Created,
-		Grant:   docInfo.Grant,
+		Grants:  docInfo.Grants,
 	}
 }
 

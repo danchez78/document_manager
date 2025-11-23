@@ -40,7 +40,7 @@ type DocInfo struct {
 	File    bool
 	Public  bool
 	Created string
-	Grant   []string
+	Grants  []string
 }
 
 func (i *DocInfo) ToDomain() *domain.DocInfo {
@@ -50,7 +50,7 @@ func (i *DocInfo) ToDomain() *domain.DocInfo {
 		File:   i.File,
 		Public: i.Public,
 		Mime:   i.Mime,
-		Grant:  i.Grant,
+		Grants: i.Grants,
 	}
 }
 
@@ -72,7 +72,7 @@ func (m *DocInfoPreview) ToDomain() *domain.DocInfo {
 		File:    m.File,
 		Public:  m.Public,
 		Created: m.Created,
-		Grant:   m.Grant,
+		Grants:  m.Grant,
 	}
 }
 

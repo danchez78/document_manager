@@ -26,6 +26,10 @@ type User struct {
 	Token          string
 }
 
+func (u *User) Authenticate(token string) {
+	u.Token = token
+}
+
 func (u *User) Deauthenticate() {
 	u.Token = ""
 }

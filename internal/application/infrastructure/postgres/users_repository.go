@@ -42,7 +42,7 @@ func (r *usersRepository) Save(ctx context.Context, user *domain.UserInput) erro
 				return ErrDuplicateUser
 			}
 		}
-		return fmt.Errorf("inserting user got error: %v", err)
+		return fmt.Errorf("inserting user got error: %w", err)
 	}
 
 	return nil
@@ -58,11 +58,11 @@ func (r *usersRepository) GetByID(ctx context.Context, id string) (*domain.User,
 	`
 	if err := r.client.QueryRow(ctx, q, id).Scan(&mUser.ID, &mUser.Login, &mUser.HashedPassword, &mUser.Token); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoProvidedUser
-		} else {
-			return nil, fmt.Errorf("getting user by id got error: %v", err)
+			return nil, domain.ErrUserNotFound
 		}
+		return nil, fmt.Errorf("getting user by id got error: %w", err)
 	}
+
 	return mUser.ToDomain(), nil
 }
 
@@ -76,11 +76,11 @@ func (r *usersRepository) GetByLogin(ctx context.Context, login string) (*domain
 	`
 	if err := r.client.QueryRow(ctx, q, login).Scan(&mUser.ID, &mUser.Login, &mUser.HashedPassword, &mUser.Token); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoProvidedUser
-		} else {
-			return nil, fmt.Errorf("getting user by id got error: %v", err)
+			return nil, domain.ErrUserNotFound
 		}
+		return nil, fmt.Errorf("getting user by login got error: %w", err)
 	}
+
 	return mUser.ToDomain(), nil
 }
 
@@ -93,7 +93,7 @@ func (r *usersRepository) Update(ctx context.Context, user *domain.User) error {
 	WHERE id = $1
 	`
 	if _, err := r.client.Exec(ctx, q, mUser.ID, mUser.Token); err != nil {
-		return fmt.Errorf("updating user got error: %v", err)
+		return fmt.Errorf("updating user got error: %w", err)
 	}
 
 	return nil

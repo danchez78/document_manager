@@ -15,7 +15,6 @@ func NewAuthenticateUserHandler(usersRepo domain.UsersRepository, tm domain.Toke
 	if usersRepo == nil {
 		panic("users repository is nil")
 	}
-
 	if tm == nil {
 		panic("token manager is nil")
 	}
@@ -38,8 +37,7 @@ func (h *AuthenticateUserHandler) Execute(ctx context.Context, userInput *domain
 		return "", err
 	}
 
-	user.Token = token
-
+	user.Authenticate(token)
 	if err := h.usersRepo.Update(ctx, user); err != nil {
 		return "", err
 	}

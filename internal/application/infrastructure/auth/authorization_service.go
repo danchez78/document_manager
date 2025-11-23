@@ -2,7 +2,6 @@ package auth
 
 import (
 	"context"
-	"slices"
 
 	"document_manager/internal/application/domain"
 )
@@ -30,7 +29,7 @@ func (s *authorizationService) CheckDocAccess(ctx context.Context, user *domain.
 		return err
 	}
 
-	if !(docInfo.Public || slices.Contains(docInfo.Grant, user.Login)) {
+	if !docInfo.HasAccess(user.Login) {
 		return domain.ErrNoAccessToDoc
 	}
 
@@ -43,7 +42,7 @@ func (s *authorizationService) CheckDocDeleteAccess(ctx context.Context, user *d
 		return err
 	}
 
-	if !slices.Contains(docInfo.Grant, user.Login) {
+	if !docInfo.CanDelete(user.Login) {
 		return domain.ErrNoAccessToDeleteDoc
 	}
 

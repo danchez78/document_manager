@@ -33,7 +33,7 @@ func (r *docsRepository) Save(ctx context.Context, doc *domain.DocInput) (string
 
 	tx, err := r.client.Begin(ctx)
 	if err != nil {
-		return "", fmt.Errorf("inserting dork got error: %v", err)
+		return "", fmt.Errorf("beginning transaction: %w", err)
 	}
 	defer func() {
 		if err := tx.Rollback(ctx); err != nil && !errors.Is(err, pgx.ErrTxClosed) {
@@ -43,7 +43,7 @@ func (r *docsRepository) Save(ctx context.Context, doc *domain.DocInput) (string
 
 	q := "INSERT INTO document_manager.docs (id, data, name, file, public, mime, created) VALUES ($1, $2, $3, $4, $5, $6, $7)"
 	if _, err := tx.Exec(ctx, q, mDoc.ID, mDoc.Data, mDoc.Name, mDoc.File, mDoc.Public, mDoc.Mime, mDoc.Created); err != nil {
-		return "", fmt.Errorf("inserting user got error: %v", err)
+		return "", fmt.Errorf("inserting document: %w", err)
 	}
 
 	q = "INSERT INTO document_manager.grants (doc_id, user_login) VALUES ($1, $2)"
@@ -79,13 +79,12 @@ func (r *docsRepository) GetDocInfoByID(ctx context.Context, id string) (*domain
 		&mDocInfo.File,
 		&mDocInfo.Public,
 		&mDocInfo.Created,
-		&mDocInfo.Grant,
+		&mDocInfo.Grants,
 	); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoProvidedDoc
-		} else {
-			return nil, fmt.Errorf("getting doc info by id got error: %v", err)
+			return nil, domain.ErrDocumentNotFound
 		}
+		return nil, fmt.Errorf("getting doc info by id got error: %w", err)
 	}
 	return mDocInfo.ToDomain(), nil
 }
@@ -175,14 +174,12 @@ func (r *docsRepository) GetDocByID(ctx context.Context, id string) (*domain.Doc
 
 	if err := r.client.QueryRow(ctx, q, id).Scan(&mDoc.Data, &mDoc.Mime); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			return nil, ErrNoProvidedUser
-		} else {
-			return nil, fmt.Errorf("getting user by id got error: %v", err)
+			return nil, domain.ErrDocumentNotFound
 		}
+		return nil, fmt.Errorf("getting doc by id got error: %w", err)
 	}
 
 	return mDoc.ToDomain(), nil
-
 }
 
 func (r *docsRepository) Delete(ctx context.Context, id string) error {
